@@ -1,0 +1,17 @@
+{
+  "name": "pngtoy",
+  "homepage": "https://gitlab.com/epistemex/pngtoy",
+  "authors": [
+    "epistemex <github@epistemex.com>"
+  ],
+  "description": "Loads, parses and decodes PNG files client side. Access to chunks, text, raw bitmap and more",
+  "main": "pngtoy.min.js",
+  "keywords": [
+    "png", "parser", "low-level", "canvas", "html5"
+  ],
+  "license": "CC BY-NC-SA 4.0",
+  "ignore": [
+    "**/.*",
+    "tuts"
+  ]
+}

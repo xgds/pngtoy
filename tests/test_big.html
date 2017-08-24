@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Test PngImage with big PNG</title>
+	<style>
+		body {font-family:sans-serif}
+		canvas {border:1px solid #aaa}
+	</style>
+</head>
+<body>
+	<h2>PngImage loading a 4096 x 4096 image.</h2>
+	<p>Loading...</p>
+
+<script src="Promise.js"></script>
+<script src="../pngtoy.min.js"></script>
+<script>
+
+	var hdr = document.querySelector("h2"),
+		p = document.querySelector("p"),
+	    img = new PngImage();
+
+	img.onload = function() {
+		document.body.removeChild(p);
+		hdr.appendChild(this.image);
+		console.log(img);
+	};
+
+	img.onerror = function(e) {
+		alert(e.message);
+	};
+
+	img.src = "verybig.png";
+
+</script>
+</body>
+</html>

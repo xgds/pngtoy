@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Test loading PNG from ArrayBuffer</title>
+</head>
+<body>
+
+	<label>Select a PNG from local drive: <input type="file"></label><br>
+
+<script src="../demos/Promise.js"></script>
+<script src="../pngtoy.min.js"></script>
+<script>
+
+	var pngtoy = new PngToy();
+	document.querySelector("input").onchange = function() {
+
+		// assumes a PNG file here! (test use only)
+		var fr = new FileReader();
+		fr.onload = function() {
+			var buffer = this.result;
+
+			// start chain - we are low-level so a few steps are involved (or see PngImage)
+			pngtoy.fetch(buffer).then(decode, error);
+
+		};
+		fr.readAsArrayBuffer(this.files[0])
+	};
+
+	function decode(bmp) {
+		// here we got the chunks mappings with access to the unfiltered raw bitmap (getChunk("IDAT"))
+		pngtoy.decode(bmp).then(convert, error);
+	}
+
+	function convert(bmp) {
+		// at result of decode we got the filtered bitmap in original format
+		pngtoy.convertToCanvas(bmp).then(show, error);
+	}
+
+	function show(canvas) {
+		// original bitmap converted to canvas format (also see convertToRGBA()).
+		document.body.appendChild(canvas);
+	}
+
+	function error(err) {alert("Could not load PNG file: " + err)}
+</script>
+</body>
+</html>

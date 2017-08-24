@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>pngtoy Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.lumen.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">pngtoy</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="PngImage.html">PngImage</a></li><li><a href="PngToy.html">PngToy</a></li><li><a href="PngToy.Chunk.html">PngToy.Chunk</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-Get Started.html">Get Started</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>﻿pngtoy</h1><p>Low-level implementation of PNG file parser/reader/decoder using JavaScript
+on client size.</p>
+<p><em>Why this when browsers already parses PNG files?</em></p>
+<p>The browser will simply load and convert any PNG type into RGBA bitmaps.
+It may also apply ICC and gamma correction to the image resulting in
+different pixel values than in the original bitmap. We won't have access
+to the internals such as chunks and meta-data, or the raw bitmap.</p>
+<p><strong>pngtoy</strong> is for special case scenarios where you need to work with the
+original bitmap as-is and you need the original pixel values and format
+(i.e. no gamma, no ICC, indexed, 16-bit, grayscale etc.). This will also 
+keep the bitmap values consistent across browsers as some browser support 
+ICC, gamma, others don't. There is also the risk that using a canvas can
+alter the bitmap values slightly due to rounding errors in the 
+pre-multiplying process (<code>getImageData()</code>, <code>putImageData()</code>).</p>
+<p><strong>pngtoy</strong> can be used to analyse PNG files, extract special information
+such as header, chunks, texts and other data, or to reduce file size, or 
+as a tool to in an attempt to repair a PNG file, add or remove chunks, 
+and so forth.</p>
+<p><strong>pngtoy</strong> attempts to read all formats specified by the W3C standard.</p>
+<p><strong>pngtoy</strong> can be used to analyse and to clean up PNG files by stripping 
+unnecessary chunks and rebuild a file you can save as new. Comes with a 
+built-in method to produce a new minimal PNG version of the original file.</p>
+<p><strong>pngtoy</strong> let you just parse the chunks without decompressing and decoding
+any data.</p>
+<h2>Features</h2><ul>
+<li>Supports 8-bit, 16-bit, indexed, bit-planes, grayscale, rgb, rgba, transparency and (interlaced).</li>
+<li>Strict parsing conforming to the standard (can be turned off for error correction purposes)</li>
+<li>CRC-32 checking for each chunk (can be turned off for error correction purposes)</li>
+<li>Using typed arrays for best performance</li>
+<li>Fast gzip implementation</li>
+<li>Non UI-blocking asynchronous block based decoding and format converting</li>
+<li>Access to chunks without the need to decompress or decode bitmaps</li>
+<li>Access to all stages (raw unfiltered buffer, filtered original format, converted to RGBA)</li>
+<li>Apply gamma to converted bitmap (file, display and optional user gamma)</li>
+<li>Handles aspect ratio correctly (pHYs chunk) (can be disabled)</li>
+<li>Parses compressed ancillary chunks and fields</li>
+<li>Parses extended chunks such as oFFs, sCAL, pCAL, sTER</li>
+<li>Uses promises (use Promise polyfill for IE)</li>
+<li>Can produce a minimal version of the original PNG (<code>toMinimal()</code>).</li>
+<li>Can be used in attempt to rescue corrupted PNG files</li>
+<li>Can load PNG files from URL, Data-URI, Object-URL, ArrayBuffer and typed array views</li>
+</ul>
+<p>Run the PNG test suit from the tests directory to see current status/rendering (must run
+from localhost in some browsers due to CORS restrictions). See known issues below.</p>
+<h2>Install</h2><p><strong>pngtoy</strong> can be installed in various ways:</p>
+<ul>
+<li>Git using HTTPS: <code>git clone https://gitlab.com/epistemex/pngtoy.git</code></li>
+<li>Git using SSH: <code>git clone git@gitlab.com:epistemex/pngtoy.git</code></li>
+<li>Download <a href="https://gitlab.com/epistemex/pngtoy/repository/archive.zip?ref=master">zip archive</a> and extract.</li>
+<li>Download <a href="https://gitlab.com/epistemex/pngtoy/repository/archive.tar.gz?ref=master">tar ball</a> and extract.</li>
+<li>Bower: <code>bower install pngtoy</code></li>
+</ul>
+<h2>Usage</h2><p>Create a new and reusable instance of pngtoy parser:</p>
+<pre class="prettyprint source"><code>var pngtoy = new PngToy([options]);</code></pre><p>Invoke asynchronous fetching of file returning a promise:</p>
+<pre class="prettyprint source"><code>pngtoy.fetch(&quot;http://url.to/png.file&quot;).then( ... );</code></pre><p>or</p>
+<pre class="prettyprint source"><code>pngtoy.fetch(arraybuffer).then( ... );</code></pre><p>Now you can extract the information you like from the current PNG file:</p>
+<pre class="prettyprint source"><code>// get and parse chunks
+var chunks = pngtoy.chunks;                       // chunk list - does not decode any data
+
+// parse individual chunks to object (all official chunks are supported)
+var ihdr = pngtoy.getChunk(&quot;IHDR&quot;);               // return object for parsed IHDR chunk
+var raw = pngtoy.getChunk(&quot;IDAT&quot;);                // get unfiltered but uncompressed bitmap data
+var palette = pngtoy.getChunk(&quot;PLTE&quot;);         // get parsed palette if exists, or null
+var texts = pngtoy.getChunk(&quot;zTXt&quot;);           // get array with parsed and uncompressed zTXt objects
+var stereo = pngtoy.getChunk(&quot;sTER&quot;);          // get stereo mode if stereo image
+...
+
+// you can also obtain private chunks but will have to parse them manually
+
+// decode
+pngtoy.decode(options).then(...);              // get decoded bitmap in original depth and type
+pngtoy.bitmapToCanvas(bmp, options).then(...); // convert to canvas and apply optional gamma</code></pre><p>See also the <code>PngImage</code> object which wraps the basic steps up for convenience (see docs for usage).</p>
+<p>NOTE: ALPHA version - API may change, see tests for current examples.</p>
+<h2>Known issues (alpha)</h2><ul>
+<li>Interlace (Adam7) mode is currently not implemented</li>
+</ul>
+<h2>License</h2><p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Attribution-NonCommercial-ShareAlike 4.0 International</a></p>
+<p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="License"></a></p>
+<p><a href="mailto:github@epistemex.com">Contact us</a> if you need a commercial license.</p>
+<p><em>&copy; 2015-2017 Epistemex</em></p>
+<p><img src="http://i.imgur.com/GP6Q3v8.png" alt="Epistemex"></p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<p><b><a href='https://gitlab.com/epistemex/'>Epistemex at GitHub</a></b></p>
+
+
+	<span class="copyright">
+	Copyright &copy; 2015-2017 Epistemex
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on Thu Aug 24th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : false,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

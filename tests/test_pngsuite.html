@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Test pngtoy</title>
+	<style>
+		body {background:#444}
+		h1 {font:24px sans-serif;color:#999}
+		p {font:16px sans-serif;color:#bbb}
+		p>a {color:#eee}
+		.cont {vertical-align:top;display:inline-block;height:320px;width:128px;background:#000;text-align:center;padding:5px 2px;margin:0 0 1px 1px}
+		.stat {font:12px sans-serif;color:#fff}
+		.stat>b {color:#0c0}
+		.stat>i {color:#f70}
+		.info {font:12px sans-serif;color:#ccc;text-align:left;padding:5px 0 0 7px;line-height: 14px;box-sizing:border-box;}
+		.info>b {color:#0d0}
+		.img {min-height:32px}
+		.block {display:inline-block;width:30px;height:30px;border:1px solid #900}
+		.debug, .debugOk {width:100%; height:100px;color:#ff7;font:12px sans-serif;text-align:left;
+			overflow:auto;box-sizing:border-box;padding:5px 0 0 7px;}
+		.debugOk {color:#777}
+		#result {
+			background:#a00;color:gold;font:16px sans-serif;padding:7px;box-sizing:border-box;margin:0 0 7px 0
+			}
+		#tools {
+			position:absolute; left:275px;top:0;
+			padding:20px;
+			display:none;
+			color:#aaa;
+			}
+		#tools>span {
+			font:16px sans-serif;
+			color:gold;
+			font-weight: bold;
+			padding:2px 0 2px 7px;
+			}
+		#tools>label {font:16px sans-serif;color:#fff;margin-right:12px}
+	</style>
+</head>
+<body>
+
+<h1>PngToy ACID test</h1>
+<div id="tools">
+	<input type="checkbox" id="chkI"><label for="chkI">Interl.</label>
+	(
+	<input type="checkbox" id="chkCol"><label for="chkCol">Colors</label>
+	<input type="checkbox" id="chkGrey"><label for="chkGrey">Greys</label>
+	)
+	<input type="checkbox" id="chkTrans"><label for="chkTrans">Transp.</label>
+	<input type="checkbox" id="chkGamma"><label for="chkGamma">Gamma</label>
+	(
+	<input type="checkbox" id="chk8bit"><label for="chk8bit">8-bit</label>
+	<input type="checkbox" id="chk16bit"><label for="chk16bit">16-bit</label>
+	<input type="checkbox" id="chkBitplane"><label for="chkBitplane">Bitplanes</label>
+	)
+	(
+	<input type="checkbox" id="chkOks"><label for="chkOks">OKs</label>
+	<input type="checkbox" id="chkErrors"><label for="chkErrors">Errors</label>
+	)
+	<span id="count"></span>
+</div>
+
+<div id="result">Loading one at the time...</div>
+<output></output>
+<br>
+<br>
+<p>For more details, go to <a href="http://www.libpng.org/pub/png/pngsuite.html">PNG test suite</a> -
+<a href="https://gitlab.com/epistemex/pngtoy">Find the <b>PngToy</b> project on GitLab</a></p>
+<img src="data:image/png;base64,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">
+
+<!--<script src="../pngtoy.min.js"></script>-->
+<script src="Promise.js"></script>
+<script src="../pngtoy.min.js"></script>
+
+<script>
+
+	var base = "pngsuite/",
+		tests = [
+			"basi0g01.png", "basi0g02.png", "basi0g04.png", "basi0g08.png", "basi0g16.png", "basi2c08.png",
+			"basi2c16.png", "basi3p01.png", "basi3p02.png", "basi3p04.png", "basi3p08.png", "basi4a08.png",
+			"basi4a16.png", "basi6a08.png", "basi6a16.png", "basn0g01.png", "basn0g02.png", "basn0g04.png",
+			"basn0g08.png", "basn0g16.png", "basn2c08.png", "basn2c16.png", "basn3p01.png", "basn3p02.png",
+			"basn3p04.png", "basn3p08.png", "basn4a08.png", "basn4a16.png", "basn6a08.png", "basn6a16.png",
+			"bgai4a08.png", "bgai4a16.png", "bgan6a08.png", "bgan6a16.png", "bgbn4a08.png", "bggn4a16.png",
+			"bgwn6a08.png", "bgyn6a16.png", "ccwn2c08.png", "ccwn3p08.png", "cdfn2c08.png", "cdhn2c08.png",
+			"cdsn2c08.png", "cdun2c08.png", "ch1n3p04.png", "ch2n3p08.png", "cm0n0g04.png", "cm7n0g04.png",
+			"cm9n0g04.png", "cs3n2c16.png", "cs3n3p08.png", "cs5n2c08.png", "cs5n3p08.png", "cs8n2c08.png",
+			"cs8n3p08.png", "ct0n0g04.png", "ct1n0g04.png", "cten0g04.png", "ctfn0g04.png", "ctgn0g04.png",
+			"cthn0g04.png", "ctjn0g04.png", "ctzn0g04.png", "f00n0g08.png", "f00n2c08.png", "f01n0g08.png",
+			"f01n2c08.png", "f02n0g08.png", "f02n2c08.png", "f03n0g08.png", "f03n2c08.png", "f04n0g08.png",
+			"f04n2c08.png", "f99n0g04.png", "g03n0g16.png", "g03n2c08.png", "g03n3p04.png", "g04n0g16.png",
+			"g04n2c08.png", "g04n3p04.png", "g05n0g16.png", "g05n2c08.png", "g05n3p04.png", "g07n0g16.png",
+			"g07n2c08.png", "g07n3p04.png", "g10n0g16.png", "g10n2c08.png", "g10n3p04.png", "g25n0g16.png",
+			"g25n2c08.png", "g25n3p04.png", "oi1n0g16.png", "oi1n2c16.png", "oi2n0g16.png", "oi2n2c16.png",
+			"oi4n0g16.png", "oi4n2c16.png", "oi9n0g16.png", "oi9n2c16.png", "pp0n2c16.png", "pp0n6a08.png",
+			"ps1n0g08.png", "ps1n2c16.png", "ps2n0g08.png", "ps2n2c16.png", "s01i3p01.png", "s01n3p01.png",
+			"s02i3p01.png", "s02n3p01.png", "s03i3p01.png", "s03n3p01.png", "s04i3p01.png", "s04n3p01.png",
+			"s05i3p02.png", "s05n3p02.png", "s06i3p02.png", "s06n3p02.png", "s07i3p02.png", "s07n3p02.png",
+			"s08i3p02.png", "s08n3p02.png", "s09i3p02.png", "s09n3p02.png", "s32i3p04.png", "s32n3p04.png",
+			"s33i3p04.png", "s33n3p04.png", "s34i3p04.png", "s34n3p04.png", "s35i3p04.png", "s35n3p04.png",
+			"s36i3p04.png", "s36n3p04.png", "s37i3p04.png", "s37n3p04.png", "s38i3p04.png", "s38n3p04.png",
+			"s39i3p04.png", "s39n3p04.png", "s40i3p04.png", "s40n3p04.png", "tbbn0g04.png", "tbbn2c16.png",
+			"tbbn3p08.png", "tbgn2c16.png", "tbgn3p08.png", "tbrn2c08.png", "tbwn0g16.png", "tbwn3p08.png",
+			"tbyn3p08.png", "tm3n3p02.png", "tp0n0g08.png", "tp0n2c08.png", "tp0n3p08.png", "tp1n3p08.png",
+			"xc1n0g08.png", "xc9n2c08.png", "xcrn0g04.png", "xcsn0g01.png", "xd0n2c08.png", "xd3n2c08.png",
+			"xd9n2c08.png", "xdtn0g01.png", "xhdn0g08.png", "xlfn0g04.png", "xs1n0g01.png", "xs2n0g01.png",
+			"xs4n0g01.png", "xs7n0g01.png", "z00n2c08.png", "z03n2c08.png", "z06n2c08.png", "z09n2c08.png"
+		],
+
+		out = document.querySelector("output"),
+		count = 0, i = 0, l = tests.length, OKs = 0, result = [];
+
+	(function runTests() {
+		if (i < l) {
+			document.getElementById("result").innerHTML = "Loading one at the time... " + i + "/" + l;
+			result.push(new Test(base, tests[i++], runTests));
+		}
+		else {
+			document.getElementById("tools").style.display = "block";
+			document.getElementById("result").innerHTML =
+					"PASS=" + OKs + " FAIL=" + (l - OKs) + " (" + ((OKs / (l-14)) * 100).toFixed(1) + "%) Total:" + l +
+					" (14 with deliberate errors) (pass does not mean it's necessary decoded properly) (image left: PngToy, right: browser)";
+			filter();
+		}
+	})();
+
+	function Test(base, url, done) {
+
+		var me = this,
+			pngtoy = new PngToy({
+				allowInvalid: false,
+				doCRC       : true
+			}),
+			block= document.createElement("div"),
+			cont = document.createElement("div"),
+			idImg = document.createElement("div"),
+			idInfo = document.createElement("div"),
+			idDebug = document.createElement("div"),
+			idStatus = document.createElement("div");
+
+		this.ok = false;
+		this.error = false;
+
+		block.className = "block";
+		cont.className = "cont";
+		idImg.className = "img";
+		idInfo.className = "info";
+		idStatus.className = "stat";
+		idDebug.className = "debug";
+
+		cont.appendChild(idImg);
+		cont.appendChild(idStatus);
+		cont.appendChild(idInfo);
+		cont.appendChild(idDebug);
+
+		this.element = cont;
+
+		pngtoy.fetch(base + url).then(decode, error);
+
+		function decode(bmp) {
+
+			var hdr = pngtoy.getChunk("IHDR"),
+				type = ["G", "", "RGB", "INDEX", "GA", "", "RGBA"][hdr.type] || "-",
+				texts = "",
+				int = hdr.interlaced ?  "<b>☑</b>" : "☐",
+				icc = pngtoy.getChunk("IHDR") ? "<b>☑</b>" : "☐",
+				srgb = pngtoy.getChunk("sRGB") ? "<b>☑</b>" : "☐",
+				pal = pngtoy.getChunk("PLTE") ? "<b>☑</b>" : "☐",
+				trns = pngtoy.getChunk("tRNS") ? "<b>☑</b>" : "☐",
+				gamma = pngtoy.getChunk("gAMA"),
+				aspect = pngtoy.getChunk("pHYs"),
+				ratio = aspect ? getRatio(aspect.ppuX, aspect.ppuY) : "-",
+			    depth = hdr.depth || "-",
+				itxt = pngtoy.getChunk("iTXt"),
+				ztxt = pngtoy.getChunk("iTXt"),
+				text = pngtoy.getChunk("iTXt");
+
+			texts += itxt && itxt.length ? "iTXt, " : "";
+			texts += ztxt && ztxt.length ? "zTXt, " : "";
+			texts += text && text.length ? "tEXT, " : "";
+			texts = (texts.length) ? texts.substr(0, texts.length - 2) : "-";
+
+			me.width = hdr.width;
+			me.height = hdr.height;
+			me.type = hdr.type;
+			me.depth = hdr.depth;
+			me.interlaced = !!hdr.interlaced;
+			me.icc = (icc.length>1);
+			me.srgb = (srgb.length>1);
+			me.palette = (pal.length>1);
+			me.transparency = (trns.length>1);
+			me.gamma = (gamma ? gamma.gamma : 0);
+			me.ratio = aspect ? getRatio(aspect.ppuX, aspect.ppuY) : 0;
+
+			idInfo.innerHTML += (type + " " + depth) + "<br>" +
+				hdr.width + " x " + hdr.height + "<br>" +
+				int + " Interlaced<br>" +
+				icc + " ICC<br>" +
+				pal + " Palette<br>" +
+				trns + " Transparency<br>" +
+				srgb + " sRGB<br>" +
+				"Text: " + texts + "<br>" +
+				"Ratio: " + ratio + "<br>" +
+				"Gamma: " + (gamma ? ((1 / gamma.gamma) +"").substr(0, 3) : "-");
+
+			idStatus.innerHTML = "Decoding...";
+			pngtoy.decode(bmp).then(convert, error);
+
+			function getRatio(x, y) {
+				if (x / y > 1) {
+					return "y=1:" + (x / y).toFixed(2);
+				}
+				else if (x / y < 1) {
+					return "x=1:" + (y / x).toFixed(2);
+				}
+				else return "1:1"
+			}
+		}
+
+		function convert(bmp) {
+			idStatus.innerHTML = "Converting...";
+			pngtoy.convertToCanvas(bmp, {
+				ignoreAspectRatio: false,                       // corrects the actual bitmap
+				useGamma         : !!me.gamma,                  // apply file's gamma
+				gamma            : pngtoy.guessDisplayGamma()   // screen's gamma (typically: windows 2.2, mac 1.8, etc.)
+			}).then(show, error);
+		}
+
+		function show(canvas) {
+			me.ok = true;
+			addDebug();
+			idImg.appendChild(canvas);
+			var img = new Image;
+			img.src = base + url;
+			img.style.marginLeft = "1px";
+			idImg.appendChild(img);
+			idStatus.innerHTML = "<b>OK</b><br>" + url;
+			OKs++;
+			if (done) done();
+		}
+
+		function error(msg) {
+			addDebug();
+			idDebug.innerHTML += "<hr>" + msg;
+
+			var img = new Image;
+			img.src = base + url;
+			img.style.marginLeft = "1px";
+			idImg.appendChild(block);
+			idImg.appendChild(img);
+			idStatus.innerHTML = "<i>Error</i><br>" + url;
+			me.error = true;
+			if (done) done();
+		}
+
+		function addDebug() {
+			if (me.ok) idDebug.className = "debugOk";
+			idDebug.innerHTML =
+					"Delta: " + pngtoy.debug.delta +
+					"<br>lineLen: " + pngtoy.debug.lineLen +
+					"<br>lineDlt: " + pngtoy.debug.lineDlt +
+					"<br>pxWidth: " + pngtoy.debug.pixelWidth +
+					"<br>byteWdt: " + pngtoy.debug.byteWidth +
+					"<br>Filters: " + (pngtoy.debug.filters || []).join(",") +
+					"<br>preFilt: " + pngtoy.debug.preFilt +
+					"<br>postFilt: " + pngtoy.debug.postFilt +
+					"<br>srcPos: " + pngtoy.debug.srcPos +
+					"<br>srcLen: " + pngtoy.debug.srcLen +
+					"<br>pass: " + pngtoy.debug.pass +
+					"<br>x: " + pngtoy.debug.x +
+					"<br>stepX: " + pngtoy.debug.stepX +
+					"<br>stepY: " + pngtoy.debug.stepY +
+					"<br>stepsX: " + pngtoy.debug.stepsX +
+					"<br>stepsY: " + pngtoy.debug.stepsY;
+
+		}
+	}
+
+	var inputs = document.querySelectorAll("input"),
+	    t = 0, len = inputs.length;
+	while(t < len) {inputs[t++].onchange = filter}
+
+	function filter() {
+		var showOKs = !!document.getElementById("chkOks").checked,
+		    showErrors = !!document.getElementById("chkErrors").checked,
+		    showInt = !!document.getElementById("chkI").checked,
+		    showBP = !!document.getElementById("chkBitplane").checked,
+		    showGreys = !!document.getElementById("chkGrey").checked,
+		    showCols = !!document.getElementById("chkCol").checked,
+		    show8bit = !!document.getElementById("chk8bit").checked,
+		    show16bit = !!document.getElementById("chk16bit").checked,
+		    showGamma = !!document.getElementById("chkGamma").checked,
+		    showTrans = !!document.getElementById("chkTrans").checked,
+			cols = [2, 3, 6],
+			greys = [0, 4], count = 0,
+			i = 0, res;
+
+		out.innerHTML = "";
+
+		// yes, a very messy filter check... we'll do for now
+		for(; res = result[i++];) {
+			if (!showOKs || (showOKs && res.ok)) {
+				if (!showErrors || (showErrors && res.error)) {
+					if (!showInt || (showInt && res.interlaced)) {
+						if (!showBP || (showBP && res.depth < 8)) {
+							if (!showGreys || (showGreys && greys.indexOf(res.type) > -1)) {
+								if (!showCols || (showCols && cols.indexOf(res.type) > -1)) {
+									if (!show8bit || (show8bit && res.depth === 8)) {
+										if (!show16bit || (show16bit && res.depth === 16)) {
+											if (!showGamma || (showGamma && res.gamma)) {
+												if (!showTrans || (showTrans && res.transparency)) {
+													out.appendChild(res.element);
+													count++;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		document.getElementById("count").innerHTML = "→ " + count;
+	}
+
+</script>
+</body>
+</html>

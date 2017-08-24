@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Test PngImage</title>
+	<style>
+		body {font-family:sans-serif}
+		canvas {border:1px solid #aaa}
+	</style>
+</head>
+<body>
+	<h2>PngImage will be created, loaded and drawn to the canvas below:</h2>
+	<canvas></canvas>
+	<br><output></output>
+<script src="Promise.js"></script>
+<script src="../pngtoy.min.js"></script>
+<script>
+
+	var canvas = document.querySelector("canvas"),
+		out = document.querySelector("output"),
+	    ctx = canvas.getContext("2d"),
+
+	    img = new PngImage();
+
+	img.onload = function() {
+
+		// Note that we need to use the property image
+		ctx.drawImage(this.image, 0, 0);
+
+		ctx.drawImage(img.image, 50, 50, img.width*0.5, img.height*0.5);
+
+		// if we want to examine details, we can obtain the pngtoy object:
+
+		var pngtoy = this.pngtoy,          // internal pngtoy object
+			hdr = pngtoy.getChunk("IHDR"); // get a parsed header object
+
+		out.innerHTML = "Color type: " + ["Grey","", "RGB","Indexed","Grey alpha","","RGBA"][hdr.type] +
+						" Depth: " + hdr.depth;
+	};
+
+	img.onerror = function(e) {
+		out.innerHTML = e.message;
+	};
+
+	img.src = "logo_rgba.png";
+
+</script>
+</body>
+</html>

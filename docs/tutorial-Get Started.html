@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>pngtoy Tutorial: Get Started</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.lumen.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">pngtoy</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="PngImage.html">PngImage</a></li><li><a href="PngToy.html">PngToy</a></li><li><a href="PngToy.Chunk.html">PngToy.Chunk</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="tutorial-Get Started.html">Get Started</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			<section class="tutorial-section">
+
+<header>
+    
+
+    <h2>Get Started</h2>
+</header>
+
+<article>
+    <p>PngToy is a low-level implementation of a PNG image file parser which gives you access
+to all the inner workings of a PNG file and its structure.</p>
+<p>For this reasons there are some more steps that needs to be taken in order to get to
+the various data and stages of a PNG file.</p>
+<p>You can access the raw chunks, the raw unfiltered bitmap, the decoded bitmap, the converted
+bitmap, chunks and so forth - leaving you in full control.</p>
+<p>If you are simply interested in getting the raw PNG file with an unaltered RGBA bitmap, see
+the <code>PngImage</code> wrapper which embeds the following steps for you (you will still have access to
+the instance processing the image via the <code>pngtoy</code> property of the <code>PngImage</code> instance).</p>
+<p><strong>The load process is as follows:</strong></p>
+<ul>
+<li>Create a <code>PngToy</code> instance</li>
+<li><code>fetch()</code> the data using either URL, Data-URI, Object-URL, ArrayBuffer or a typed array view</li>
+<li><code>decode()</code> the raw unfiltered bitmap into the original intended bitmap format (raw)</li>
+<li>optionally <code>convert()</code> the bitmap to RGBA and/or canvas which can handle all the valid PNG bitmap formats if you don't want to do this yourself.</li>
+</ul>
+<p><strong>For each steps the following happens:</strong></p>
+<p><code>fetch()</code> will in addition to loading from an URL, validate the PNG file and map the various chunks.
+After this step you can access all the raw internals including the unfiltered bitmap using the <code>getChunk()</code> call.</p>
+<p><code>decode()</code> will filter the bitmap. By filter we mean apply the scanline filters which is defined by the encoder.
+The result is a bitmap which can now be iterated in raw form. This means you have either 8-bit, 16-bit, bit-plane formats
+etc. and will have manually convert if you need it in a different format.</p>
+<p><code>convert()</code> step will convert the data into standard 8-bit RGBA format. In our example directly to a canvas element (<code>convertToCanvas()</code>)
+but you can of course convert to a separate buffer using <code>convertToRGBA()</code> instead.</p>
+<h2>Example</h2><p><em>See a running example using the file <a href="https://epistemex.github.io/pngtoy/arraybuffer.html"><code>tests/test_buffer.html</code></a>.</em></p>
+<p>Load a PNG file from <code>&lt;input type=file&gt;</code> tag:</p>
+<p><strong>HTML</strong></p>
+<pre class="prettyprint source"><code>&lt;script src=&quot;pngtoy.min.js&quot;>&lt;/script>
+
+&lt;label>Select a PNG from local drive: &lt;input type=&quot;file&quot;>&lt;/label>&lt;br></code></pre><p><strong>JavaScript</strong></p>
+<pre class="prettyprint source"><code>// create an instance
+var pngtoy = new PngToy();
+
+// handle user selected file
+document.querySelector(&quot;input&quot;).onchange = function() {
+
+    // assumes a PNG file is picked! (test use only)
+
+    // convert File blob to ArrayBuffer
+    var fr = new FileReader();
+    fr.onload = function() {
+
+        // we have the ArrayBuffer
+        var buffer = this.result;
+
+        // provide buffer to fetch() which will validate the file type
+        // as well as parsing the chunk structure.
+        pngtoy.fetch(buffer).then(decode, error)
+    };
+
+    // start loading File as ArrayBuffer
+    fr.readAsArrayBuffer(this.files[0])
+};
+
+// At this stage we have access to the chunk list and the raw content of each.
+// First additional step is to decode the raw unfiltered bitmap into a raw filtered bitmap
+// to make it more useful. Note: all image data is in big-endian format.
+function decode(png) {
+    pngtoy.decode(png).then(convert, error);
+}
+
+// Now we can choose what we want to do with the data, here simply
+// convert it to a RGBA canvas (independent of original bitmap format).
+function convert(png) {
+    pngtoy.convertToCanvas(png, {}).then(show, error);
+}
+
+// show the result
+function show(canvas) {
+    document.body.appendChild(canvas)
+}
+
+// common error handler 
+function error(err) {alert(&quot;Could not load PNG file: &quot; + err)}</code></pre><p>After we have decoded the image (<code>decode()</code> step) we are free to choose the
+next step for our needs. Maybe we need to access 16-bit grayscale data as-is
+and so forth.</p>
+<p>Note that the conversion to canvas preserves the original bitmap values as
+far as possible. We recommend reading the bitmap directly from the <code>PngToy</code>
+instance however, as this will guarantee unaltered values, especially in
+the case of non-opaque alpha channel which may be altered when converted
+to canvas by the browser implementation (in the pre-multiplying process).</p>
+<p>The <code>getChunk()</code> call will parse all official chunks structures into an
+convenient object for you (see documentation and source for details).
+Any private chunk however will be given in raw binary form. Each chunk
+exist in a chunk-list containing the binary position and length if you
+want to parse the official chunks manually. Access point for the chunk-list
+is found via the property <code>instance.chunks</code>.</p>
+</article>
+
+</section>
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<p><b><a href='https://gitlab.com/epistemex/'>Epistemex at GitHub</a></b></p>
+
+
+	<span class="copyright">
+	Copyright &copy; 2015-2017 Epistemex
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on Thu Aug 24th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : false,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>
