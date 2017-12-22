@@ -1,0 +1,7 @@
+
+{
+  "name": "pngtoy",
+  "description": "Loads, parses and decodes PNG files client side. Access to chunks, text, raw bitmap and more",
+  "main": "pngtoy.min.js",
+  "license": "CC BY-NC-SA 4.0"
+}
