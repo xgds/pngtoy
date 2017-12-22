@@ -2,6 +2,11 @@
 {
   "name": "pngtoy",
   "description": "Loads, parses and decodes PNG files client side. Access to chunks, text, raw bitmap and more",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/VWoeltjen/pngtoy.git"
+  },
   "main": "pngtoy.min.js",
   "license": "CC BY-NC-SA 4.0"
 }
