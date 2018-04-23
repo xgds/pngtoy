@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/VWoeltjen/pngtoy.git"
+    "url": "git://github.com/xgds/pngtoy.git"
   },
   "main": "pngtoy.min.js",
   "license": "CC BY-NC-SA 4.0"
